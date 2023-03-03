@@ -20,7 +20,7 @@ import {fetchFilterdEmployees } from "../Redux/EmployeesList/action"
 import { useDispatch , useSelector } from 'react-redux';
 import { connect } from "react-redux";
 import { reduxForm, Field } from "redux-form";
-import {  useParams } from "react-router-dom";
+import {  useParams, useSearchParams , useLocation } from "react-router-dom";
 import { reset, destroy, isPristine } from 'redux-form';
 const drawerWidth = 350;
 
@@ -80,11 +80,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const employees = useSelector((state) => state.employees);
   const emoloyees_list = employees?.employees
   const formNotify = useSelector((state) => state.form);
-
+ const [searchParams , setSearchParams] = useSearchParams()
+ const [query, setQuery] = useState(searchParams.get({ email:  'email' ,phone: 'phone' , date:'date' , country:'country'}))
 
  const clearValues = (e) => {
     e.preventDefault();
     dispatch(destroy('FiltersForm'));
+    setSearchParams()
   }
 
   const handleDrawerOpen = () => {
@@ -110,6 +112,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
         date:values.by_date,
         country:values.by_counry
     }
+    setQuery({email :  values.by_email , phone: values.by_phone , date:values.by_date , country:values.by_counry});
+    setSearchParams({email:  values.by_email , phone:values.by_phone , date:values.by_date , country:values.by_counry})
     formNotify?.FiltersForm?.values ? await dispatch(fetchFilterdEmployees(data))  :
     await dispatch(fetchEmployees()) 
   
